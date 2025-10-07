@@ -49,6 +49,11 @@ This template provides a solid foundation for building backends that require use
 - **Prisma ORM**: Type-safe database queries
 - **Input/Output Validation**: Automatic request/response validation
 
+### AI-Ready Development
+- **Cline Rules**: Pre-configured `.clinerules/` directory with development guidelines
+- **Structured Documentation**: Module structure, OpenAPI patterns, and HTTP handler best practices
+- **Consistent Patterns**: Standardized code organization for AI-assisted development
+
 ## Technology Stack
 
 - **Runtime**: Node.js 20

@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  GUEST
+}
+
+enum AuthProviderType {
+  EMAIL_PASSWORD
+  GOOGLE
+  GITHUB
+  SLACK
+}
+
+model User {
+  id          String     @id @default(uuid())
+  email       String     @unique
+  roles       UserRole[] @default([GUEST])
+  name        String?
+  isActive    Boolean    @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  apiKeys       ApiKey[]
+  authProviders AuthProvider[]
+
+  @@index([email])
+  @@index([isActive])
+}
+
+model AuthProvider {
+  id           String           @id @default(uuid())
+  userId       String
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type         AuthProviderType
+  providerId   String?
+  passwordHash String?
+  
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@unique([userId, type])
+  @@unique([type, providerId])
+  @@index([userId])
+  @@index([type, providerId])
+}
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String?
+  keyHash    String
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+
+  @@unique([userId, keyHash])
+  @@index([userId])
+}
+
+model LogEntry {
+  id          String   @id @default(uuid())
+  timestamp   DateTime @default(now())
+  level       String
+  message     String
+  service     String   @default("template-backend")
+  environment String?
+  context     Json?
+  traceId     String?
+  userId      String?
+
+  @@index([timestamp])
+  @@index([level])
+  @@index([traceId])
+  @@index([userId])
+  @@index([timestamp, level])
+}

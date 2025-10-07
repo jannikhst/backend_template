@@ -1,0 +1,21 @@
+services:
+  db-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_db_migrate
+    env_file:
+      - ../../.env
+    volumes:
+      - ../prisma:/app/prisma:ro
+    networks:
+      - internal_db_network
+    restart: "no"  # Don't restart - run once and exit
+
+networks:
+  internal_db_network:
+    name: internal_db_network
+    external: true
+
+# Note: This assumes the postgres service is running from the parent db/compose.yml
+# To run migrations: docker-compose -f db/migrate/compose.yml up --build

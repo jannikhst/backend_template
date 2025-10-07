@@ -1,0 +1,14 @@
+{
+  "name": "db-migrate",
+  "version": "1.0.0",
+  "description": "Database migration helper container",
+  "private": true,
+  "scripts": {
+    "migrate": "node migrate.js"
+  },
+  "dependencies": {
+    "prisma": "^6.13.0",
+    "@prisma/client": "^6.13.0",
+    "pg": "^8.11.0"
+  }
+}

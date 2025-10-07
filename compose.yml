@@ -49,6 +49,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma
+      - ./docs:/app/docs
     command: npm run dev
     networks:
       - internal_db_network

@@ -179,13 +179,50 @@ npm run typecheck
 
 ## Deployment
 
-### Docker Deployment
+### Automated CI/CD
 
-The template is designed to run in Docker containers and works seamlessly with reverse proxies like Traefik.
+This template includes automated build and deployment via GitHub Actions:
+
+- **Automatic Versioning**: Semantic versioning with auto-incrementing patch versions
+- **Docker Builds**: Multi-stage builds pushed to GitHub Container Registry
+- **Build Metadata**: Version, commit hash, and build time injected at build time
+- **Multi-Platform**: Supports linux/amd64 architecture
+
+See [`.github/VERSIONING.md`](.github/VERSIONING.md) for detailed versioning documentation.
+
+#### GitHub Actions Workflow
+
+On push to `main` branch:
+1. Automatically generates next version (e.g., `1.0.0` → `1.0.1`)
+2. Creates and pushes Git tag (`backend-template-v1.0.1`)
+3. Builds Docker image with version metadata
+4. Pushes to GitHub Container Registry with multiple tags
+
+#### Using Pre-Built Images
+
+Pull and run the latest production image:
+
+```bash
+# Pull latest image
+docker pull ghcr.io/YOUR_USERNAME/backend_template:latest
+
+# Run with production compose file
+docker compose -f compose.yml -f compose.prod.yml up -d
+```
+
+Update `compose.prod.yml` with your GitHub username before deploying.
+
+### Manual Docker Deployment
+
+For manual builds without CI/CD:
 
 1. Build the image:
 ```bash
-docker build -t backend-template .
+docker build -t backend-template \
+  --build-arg BUILD_VERSION=1.0.0 \
+  --build-arg BUILD_COMMIT=$(git rev-parse HEAD) \
+  --build-arg BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  .
 ```
 
 2. Run with Docker Compose:
